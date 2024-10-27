@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Facial Emotion Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+        #video-container {
+            margin-top: 20px;
+        }
+        img {
+            width: 80%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #compliment {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        #start-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #start-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Emotion Detection</h1>
+    <button id="start-button">Start Emotion Detection</button>
+    <div id="video-container" style="display: none;">
+        <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+    </div>
+    <div id="compliment"></div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('video-container').style.display = 'block';
+            startEmotionDetection();
+        });
+
+        function startEmotionDetection() {
+            const videoElement = document.querySelector('img');
+            const interval = setInterval(async () => {
+                // Fetch the latest emotion from the video feed
+                const response = await fetch('/video_feed');
+                if (response.ok) {
+                    // Detect emotion and fetch compliment
+                    const emotion = await detectEmotion(); // Function to be defined below
+                    fetch(`/compliment/${emotion}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('compliment').innerText = data.compliment;
+                        });
+                }
+            }, 1000); // Adjust the interval as needed
+        }
+
+        async function detectEmotion() {
+            // Implement a method to get the current detected emotion
+            // You might need to adjust this based on your setup
+            // For now, just returning a random emotion for demonstration
+            const emotions = ["happy", "sad", "angry", "surprised", "disgust", "fear", "neutral"];
+            return emotions[Math.floor(Math.random() * emotions.length)];
+        }
+    </script>
+</body>
+</html>

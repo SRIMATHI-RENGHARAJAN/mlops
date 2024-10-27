@@ -1,0 +1,8 @@
+Flask
+opencv-python
+deepface
+Werkzeug
+numpy
+keras
+tensorflow==2.18.0
+tf-keras
